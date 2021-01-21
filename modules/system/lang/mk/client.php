@@ -13,7 +13,7 @@ return [
     */
 
     'markdowneditor' => [
-        'formatting' => 'Formatting',
+        'formatting' => 'Форматирање',
         'quote' => 'Цитат',
         'code' => 'Код',
         'header1' => 'Заглавие 1',
@@ -38,11 +38,11 @@ return [
         'insert_image' => 'Вметни слика',
         'insert_video' => 'Вметни видео',
         'insert_audio' => 'Вметни аудио',
-        'invalid_file_empty_insert' => 'Please select file to insert a links to.',
-        'invalid_file_single_insert' => 'Please select a single file.',
-        'invalid_image_empty_insert' => 'Please select image(s) to insert.',
-        'invalid_video_empty_insert' => 'Please select a video file to insert.',
-        'invalid_audio_empty_insert' => 'Please select an audio file to insert.',
+        'invalid_file_empty_insert' => 'Изберете датотека кон која ќе се вметнат линкови.',
+        'invalid_file_single_insert' => 'Изберете една датотека за вметнување.',
+        'invalid_image_empty_insert' => 'Изберете слика/слики за вметнување.',
+        'invalid_video_empty_insert' => 'Изберете видео датотека за вметнување.',
+        'invalid_audio_empty_insert' => 'Изберете аудио датотека за вметнување.',
     ],
     'alert' => [
         'confirm_button_text' => 'Добро',
