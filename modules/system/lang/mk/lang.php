@@ -468,17 +468,17 @@ return [
             'help' => 'We\'re sorry, but something went wrong and the page cannot be displayed.',
         ],
         'invalid_token' => [
-            'label' => 'Invalid security token',
+            'label' => 'Невалиден безбедносен токен',
         ],
         'maintenance' => [
             'label' => "We'll be right back!",
             'help' => "We're currently down for maintenance, check back soon!",
-            'message' => 'Message:',
+            'message' => 'Порака:',
             'available_at' => 'Try again after:',
         ],
     ],
     'pagination' => [
-        'previous' => 'Previous',
-        'next' => 'Next',
+        'previous' => 'Претходно',
+        'next' => 'Следно',
     ],
 ];

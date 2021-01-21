@@ -24,12 +24,12 @@ return [
     'before'               => 'The :attribute must be a date before :date.',
     'before_or_equal'      => 'The :attribute must be a date before or equal to :date.',
     'between'              => [
-        'numeric' => 'The :attribute must be between :min and :max.',
-        'file'    => 'The :attribute must be between :min and :max kilobytes.',
-        'string'  => 'The :attribute must be between :min and :max characters.',
-        'array'   => 'The :attribute must have between :min and :max items.',
+        'numeric' => ':attribute мора да биде помеѓу :min и :max.',
+        'file'    => ':attribute мора да биде помеѓу :min и :max килобајти.',
+        'string'  => ':attribute мода да биде помеѓу :min и :max карактери.',
+        'array'   => ':attribute мода да има помеѓу :min and :max предмети.',
     ],
-    'boolean'              => 'The :attribute field must be true or false.',
+    'boolean'              => ':attribute полето мора да биде вистинито (true) или невистинито (false).',
     'confirmed'            => 'The :attribute confirmation does not match.',
     'date'                 => 'The :attribute is not a valid date.',
     'date_equals'          => 'The :attribute must be a date equal to :date.',
@@ -114,7 +114,7 @@ return [
     'timezone'             => 'The :attribute must be a valid zone.',
     'unique'               => 'The :attribute has already been taken.',
     'uploaded'             => 'The :attribute failed to upload.',
-    'url'                  => 'The :attribute format is invalid.',
+    'url'                  => ':attribute има невалиден формат.',
     'uuid'                 => 'The :attribute must be a valid UUID.',
 
     /*
