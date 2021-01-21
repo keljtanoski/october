@@ -13,10 +13,10 @@ return [
     |
     */
 
-    'accepted'             => 'The :attribute must be accepted.',
-    'active_url'           => 'The :attribute is not a valid URL.',
-    'after'                => 'The :attribute must be a date after :date.',
-    'after_or_equal'       => 'The :attribute must be a date after or equal to :date.',
+    'accepted'             => 'Полето :attribute мора да биде прифатено.',
+    'active_url'           => 'Полето :attribute мора да содржи валиден URL.',
+    'after'                => 'Полето :attribute мора да содржи датум кој е после :date.',
+    'after_or_equal'       => 'Полето :attribute мора да содржи датум кој е после или еднаков на :date.',
     'alpha'                => 'The :attribute may only contain letters.',
     'alpha_dash'           => 'The :attribute may only contain letters, numbers, and dashes.',
     'alpha_num'            => 'The :attribute may only contain letters and numbers.',
