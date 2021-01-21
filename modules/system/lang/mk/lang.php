@@ -139,7 +139,7 @@ return [
         'refresh_confirm' => 'Are you sure you want to reset the selected plugins? This will reset each plugin\'s data, restoring it to the initial install state.',
         'refresh_success' => 'Successfully reset the selected plugins.',
         'remove_confirm' => 'Are you sure you want to remove the selected plugins? This will remove all associated data as well.',
-        'remove_success' => 'Successfully removed the selected plugins.',
+        'remove_success' => 'Избраните приклучоци се успешно отстранети.',
     ],
     'project' => [
         'name' => 'Project',
