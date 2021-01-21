@@ -31,6 +31,7 @@ return [
         'kr' => '한국어',
         'lt' => 'Lietuvių',
         'lv' => 'Latviešu',
+        'mk' => 'Македонски',
         'nb-no' => 'Norsk (Bokmål)',
         'nl' => 'Nederlands',
         'pl' => 'Polski',
@@ -96,8 +97,8 @@ return [
         'remove_confirm' => 'Are you sure you want to remove this theme?',
     ],
     'plugin' => [
-        'label' => 'Plugin',
-        'unnamed' => 'Unnamed plugin',
+        'label' => 'Плагин',
+        'unnamed' => 'Неименуван плагин',
         'name' => [
             'label' => 'Plugin Name',
             'help' => 'Name the plugin by its unique code. For example, RainLab.Blog',
