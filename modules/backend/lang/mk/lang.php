@@ -13,8 +13,8 @@ return [
         'colors_method_not_exists' => "The model class :model must define a method :method() returning html color HEX codes for the ':field' form field.",
     ],
     'widget' => [
-        'not_registered' => "A widget class name ':name' has not been registered",
-        'not_bound' => "A widget with class name ':name' has not been bound to the controller",
+        'not_registered' => "Името на виџет класата ':name' не беше регистрирано",
+        'not_bound' => "Виџет со име на класа ':name' не беше врзано со контролерот",
     ],
     'page' => [
         'untitled' => 'Без наслов',
@@ -636,11 +636,11 @@ return [
         'selection_mode_normal' => 'Normal',
         'selection_mode_fixed_ratio' => 'Fixed ratio',
         'selection_mode_fixed_size' => 'Fixed size',
-        'height' => 'Height',
-        'width' => 'Width',
-        'selection_mode' => 'Selection mode',
-        'resize_image' => 'Resize image',
-        'image_size' => 'Image size:',
-        'selected_size' => 'Selected:',
+        'height' => 'Висина',
+        'width' => 'Ширина',
+        'selection_mode' => 'Режим на избор',
+        'resize_image' => 'Промени големина на слика',
+        'image_size' => 'Големина на слика:',
+        'selected_size' => 'Избрано:',
     ],
 ];
