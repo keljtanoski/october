@@ -92,9 +92,9 @@ return [
         ],
         'editor' => [
             'title' => 'Уредник на изворен код',
-            'description' => 'Your operating system should be configured to listen to one of these URL schemes.',
+            'description' => 'Вашиот оперативен систем треба да биде конфигуриран да слуша една од овие URL-шеми.',
             'openWith' => 'Отвори со',
-            'remember_choice' => 'Remember selected option for this session',
+            'remember_choice' => 'Запомнете ја избраната опција за оваа сесија',
             'open' => 'Отвори',
             'cancel' => 'Откажи',
         ],
