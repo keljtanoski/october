@@ -28,6 +28,7 @@ return [
         'ja' => '日本語',
         'lt' => 'Lietuvių',
         'lv' => 'Latviešu',
+        'mk' => 'Македонски',
         'nb-no' => 'Norsk (Bokmål)',
         'nl' => 'Nederlands',
         'pl' => 'Polski',

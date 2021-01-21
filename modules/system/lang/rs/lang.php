@@ -31,6 +31,7 @@ return [
         'kr' => '한국어',
         'lt' => 'Lietuvių',
         'lv' => 'Latviešu',
+        'mk' => 'Македонски',
         'nb-no' => 'Norsk (Bokmål)',
         'nl' => 'Nederlands',
         'pl' => 'Polski',
