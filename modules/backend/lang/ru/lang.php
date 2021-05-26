@@ -7,10 +7,9 @@ return [
     ],
     'field' => [
         'invalid_type' => 'Использован неверный тип поля: :type.',
-        'options_method_invalid_model' => "Атрибут ':field' не соответствует допустимой модели. Попробуйте явно указать метод параметров для класса :model .",
+        'options_method_invalid_model' => "The attribute ':field' does not resolve to a valid model. Try specifying the options method for model class :model explicitly.",
         'options_method_not_exists' => "Класс модели :model должен содержать метод :method(), возвращающий опции для поля формы ':field'.",
-        'options_static_method_invalid_value' => "Статический метод ':method()' в :class не вернул допустимый массив параметров.",
-        'colors_method_not_exists' => "Класс модели :model должен содержать метод :method(), возвращающий HTML цвет в HEX для поля формы ':field'.",
+        'colors_method_not_exists' => "Класс модели :model должен содержать метод :method(), возвращающий HTML цвет в HEX для поля формы ':field'."
     ],
     'widget' => [
         'not_registered' => "Класс виджета ':name' не зарегистрирован.",
@@ -18,64 +17,64 @@ return [
     ],
     'page' => [
         'untitled' => 'Без названия',
-        '404' => [
-            'label' => 'Страница не найдена',
-            'help' => 'Мы тщательно искали, но запрошенный URL так и не смогли найти. Может быть вы искали что то ещё?',
-            'back_link' => 'Вернуться к предыдущей странице',
+        'not_found' => [
+            'label'     => 'Страница не найдена',
+            'help'      => "Запрашиваемая страница не найдена.",
+            'back_link' => 'Вернутся к предыдущей странице',
         ],
         'access_denied' => [
             'label' => 'Доступ запрещен',
             'help' => 'У вас нет необходимых прав для просмотра этой страницы.',
-            'cms_link' => 'Перейти к CMS',
+            'cms_link' => 'Перейти к CMS'
         ],
         'no_database' => [
             'label' => 'Отсутствует база данных',
             'help' => "Для доступа к серверу требуется база данных. Проверьте, что база данных настроена и перенесена, прежде чем повторять попытку.",
-            'cms_link' => 'Вернуться на главную страницу',
+            'cms_link' => 'Вернуться на главную страницу'
         ],
     ],
     'partial' => [
-        'not_found_name' => 'Не удалось найти фрагмент (partial) с именем :name.',
-        'invalid_name' => 'Неправильное имя фрагмента: :name.',
+        'not_found_name' => 'Не удалось найти шаблон (partial) с именем :name.',
+        'invalid_name' => 'Неправильное название фрагмента: :name.',
     ],
     'ajax_handler' => [
-        'invalid_name' => 'Неправильное имя AJAX обработчика: :name.',
-        'not_found' => "AJAX обработчик ':name' не найден.",
+        'invalid_name' => 'Неправильное название AJAX метода: :name.',
+        'not_found' => "AJAX метод ':name' не найден."
     ],
     'account' => [
         'impersonate' => 'Имперсонация пользователя',
-        'impersonate_confirm' => 'Вы уверены, что хотите имперсонировать себя в качестве этого пользователя? Вы сможете вернуться в исходное состояние выйдя из системы.',
-        'impersonate_success' => 'Теперь вы имперсонированы как этот пользователь',
+        'impersonate_confirm' => 'Вы уверены что хотите авторизоваться этим пользователем? Вы можете вернутся к своему аккаунту выйдя из него.',
+        'impersonate_success' => 'You are now impersonating this user',
         'impersonate_working' => 'Имперсонация...',
-        'impersonating' => 'Имперсонация :full_name',
-        'stop_impersonating' => 'Остановить имперсонацию',
-        'unsuspend' => 'Приостановлен',
-        'unsuspend_confirm' => 'Вы уверены что хотите приостановить данного пользователя?',
-        'unsuspend_success' => 'Пользователь был приостановлен.',
-        'unsuspend_working' => 'Приостановка...',
+        'impersonating' => 'Имперсонированы как :full_name',
+        'stop_impersonating' => 'Прекратить имперсонацию',
         'signed_in_as' => 'Выполнен вход как :full_name',
         'sign_out' => 'Выйти',
         'login' => 'Вход',
-        'reset' => 'Сбросить',
+        'input_username' => 'Логин',
+        'input_password' => 'Пароль',
+        'login_prompt' => 'Добро пожаловать! Пожалуйста введите логин и пароль для входа чтобы продолжить.',
+        'reset' => 'Сбрость',
         'restore' => 'Восстановить',
-        'login_placeholder' => 'пользователь',
-        'password_placeholder' => 'пароль',
+        'login_placeholder' => 'Логин',
+        'password_restore' => 'Сбросить пароль',
+        'password_placeholder' => 'Пароль',
         'remember_me' => 'Оставаться в системе',
         'forgot_password' => 'Забыли пароль?',
-        'enter_email' => 'Введите ваш Email',
-        'enter_login' => 'Введите ваш Логин',
+        'enter_email' => 'Введите свой email',
+        'enter_login' => 'Пожалуйста введите свой логин чтобы сбросить пароль.',
         'email_placeholder' => 'email',
-        'enter_new_password' => 'Введите новый пароль',
-        'password_reset' => 'Сбросить пароль',
-        'restore_success' => 'На вашу электронную почту отправлено сообщение с инструкциями для восстановления пароля.',
-        'restore_error' => "Пользователь с логином ':login' не найден.",
-        'reset_success' => 'Ваш пароль был успешно изменен. Теперь вы можете войти на сайт.',
-        'reset_error' => 'Недействительные данные для изменения пароля. Пожалуйста, попробуйте еще раз!',
-        'reset_fail' => 'Невозможно изменить пароль!',
+        'enter_new_password' => 'Пожалуйста введите новый пароль.',
+        'password_reset' => 'Сброс пароля',
+        'restore_success' => 'Если аккаунт существует, на его электронную почту будет отправлено сообщение с инструкциями для восстановления пароля.',
+        'restore_error' => "Пользователь ':login' не найден",
+        'reset_success' => 'Пароль был успешно сброшен. Теперь вы можете войти в систему.',
+        'reset_error' => 'Неправильный пароль! Попробуйте еще раз',
+        'reset_fail' => 'Невозможно сбросить ваш пароль!',
         'apply' => 'Применить',
         'cancel' => 'Отменить',
         'delete' => 'Удалить',
-        'ok' => 'OK',
+        'ok' => 'OK'
     ],
     'dashboard' => [
         'menu_label' => 'Панель управления',
@@ -104,7 +103,7 @@ return [
         'expand_all' => 'Развернуть всё',
         'status' => [
             'widget_title_default' => 'Статус системы',
-            'update_available' => '{0} нет новых обновлений!|{1} доступно новое обновление!|[2,Inf] доступны новые обновления!',
+            'update_available' => '{0} нет новый обновлений!|{1} доступно новое обновление!|[2,Inf] доступны новые обновления!',
             'updates_pending' => 'Доступны обновления',
             'updates_nil' => 'Используется последняя версия',
             'updates_link' => 'Обновить',
@@ -114,7 +113,7 @@ return [
             'core_build' => 'Сборка',
             'event_log' => 'Лог событий',
             'request_log' => 'Лог запросов',
-            'app_birthday' => 'Онлайн с',
+            'app_birthday' => 'Онлайн с'
         ],
         'welcome' => [
             'widget_title_default' => 'Добро пожаловать',
@@ -123,7 +122,7 @@ return [
             'first_sign_in' => 'Это первый раз, когда вы вошли в систему.',
             'last_sign_in' => 'Последний раз вы заходили',
             'view_access_logs' => 'Посмотреть лог доступа',
-            'nice_message' => 'Хорошего дня!',
+            'nice_message' => 'Хорошего дня!'
         ],
     ],
     'user' => [
@@ -175,7 +174,7 @@ return [
             'new' => 'Добавить группу',
             'delete_confirm' => 'Вы действительно хотите удалить эту группу администраторов?',
             'return' => 'Вернуться к списку групп',
-            'users_count' => 'Пользователи',
+            'users_count' => 'Пользователи'
         ],
         'role' => [
             'name' => 'Роль',
@@ -189,13 +188,13 @@ return [
             'new' => 'Новая роль',
             'delete_confirm' => 'Удалить эту роль администратора?',
             'return' => 'Вернуться к списку ролей',
-            'users_count' => 'Пользователи',
+            'users_count' => 'Пользователи'
         ],
         'preferences' => [
-            'not_authenticated' => 'Невозможно загрузить или сохранить настройки для неавторизованного пользователя.',
+            'not_authenticated' => 'Невозможно загрузить или сохранить настройки для неавторизованного пользователя.'
         ],
         'trashed_hint_title' => 'Этот аккаунт был удален',
-        'trashed_hint_desc' => 'Этот аккаунт был удален и не может быть авторизован. Чтобы восстановить его, нажмите иконку восстановления пользователя в правом нижнем углу.',
+        'trashed_hint_desc' => 'Этот аккаунт был удален и больше не имеет возможности авторизоваться. Чтобы восстановить этот аккаунт, нажмите на иконку восстановления в правом нижнем углу.',
     ],
     'list' => [
         'default_title' => 'Список',
@@ -226,22 +225,25 @@ return [
         'delete_selected_confirm' => 'Удалить выбранные записи?',
         'delete_selected_success' => 'Выбранные записи успешно удалены.',
         'column_switch_true' => 'Да',
-        'column_switch_false' => 'Нет',
+        'column_switch_false' => 'Нет'
     ],
     'fileupload' => [
         'attachment' => 'Приложение',
         'help' => 'Добавьте заголовок и описание для этого вложения.',
         'title_label' => 'Название',
         'description_label' => 'Описание',
-        'default_prompt' => 'Кликните по %s или перетащите файл сюда для загрузки',
         'attachment_url' => 'URL',
         'upload_file' => 'Загрузить файл',
         'upload_error' => 'Ошибка загрузки',
         'remove_confirm' => 'Вы уверены?',
         'remove_file' => 'Удалить файл',
+        'clear' => 'Удалить',
+        'delete_selected' => 'Удалить выбранное',
+        'upload' => 'Загрузить',
+        'replace' => 'Заменить'
     ],
     'repeater' => [
-        'add_new_item' => 'Добавить новый объект',
+        'add_new_item' => 'Добавить элемент',
         'min_items_failed' => ':name требует минимум :min объектов, было передано только :items',
         'max_items_failed' => ':name позволяет передать максимум :max объектов, было передано :items',
     ],
@@ -255,6 +257,7 @@ return [
         'restore_success' => ':name восстановлен',
         'reset_success' => 'Сброс завершен',
         'missing_id' => 'Идентификатор формы записи не указан.',
+        'missing_tab' => 'Отсутствует определение вкладки.',
         'missing_model' => 'Для формы используемой в :class не определена модель.',
         'missing_definition' => "Поведение формы не содержит поле для':field'.",
         'not_found' => 'Форма записи с идентификатором :ID не найдена.',
@@ -273,8 +276,8 @@ return [
         'confirm_delete_multiple' => 'Вы действительно хотите удалить выбранные записи?',
         'deleting_name' => 'Удаление :name...',
         'restore' => 'Восстановить',
-        'restoring' => 'Восстановление...',
-        'confirm_restore' => 'Вы уверены, что хотите восстановить эту запись?',
+        'restoring' => 'Восстановление',
+        'confirm_restore' => 'Вы уверены что хотите восстановить эту запись?',
         'reset_default' => 'Сбросить настройки',
         'resetting' => 'Сброс',
         'resetting_name' => 'Сброс :name',
@@ -305,15 +308,42 @@ return [
         'concurrency_file_changed_title' => 'Файл был изменен',
         'concurrency_file_changed_description' => 'Файл,редактируемый вами, был изменен другим пользователем. Вы можете перезагрузить файл и потерять ваши изменения или перезаписать его',
         'return_to_list' => 'Вернуться к списку',
+        'no_options_found' => 'Опции не найдены',
+        'error' => 'Ошибка',
+        'toggle_full_screen' => 'Перейти в полноэкранный режим'
+    ],
+    'treeview' => [
+        'expand' => 'Expand',
+        'collapse' => 'Collapse',
+        'clear_search' => 'Clear Search',
+        'search' => 'Search',
+        'command_or_document' => 'Command or Document...',
+        'quick_access' => 'Quick Access',
+        'open' => 'Open',
+        'commands' => 'Commands'
+    ],
+    'tabs' => [
+        'close' => 'Закрыть вкладку',
+        'close_all' => 'Закрыть все вкладки',
+        'close_others' => 'Закрыть остальные вкладки',
+        'close_saved' => 'Закрыть сохраненные вкладки',
+        'full_screen' => 'Переключить полноэкранный режим'
+    ],
+    'modal' => [
+        'close' => 'Close'
+    ],
+    'dropdownmenu' => [
+        'go_back' => 'Go Back',
+        'close_menu' => 'Close Menu'
     ],
     'recordfinder' => [
         'find_record' => 'Найти запись',
-        'invalid_model_class' => 'Предоставленный класс модели ":modelClass" для поиска записи является недействительным',
-        'cancel' => 'Отмена',
+        'invalid_model_class' => 'Предоставленный класс модели ":modelClass" для recordfinder недействителен.',
+        'cancel' => 'Отмена'
     ],
     'pagelist' => [
         'page_link' => 'Ссылка на страницу',
-        'select_page' => 'Выберите страницу...',
+        'select_page' => 'Выберите страницу...'
     ],
     'relation' => [
         'missing_config' => "Поведение отношения не имеет конфигурации для ':config'.",
@@ -346,11 +376,11 @@ return [
         'link_name' => 'Соединение :name',
         'unlink' => 'Отвязать',
         'unlink_name' => 'Разъединение :name',
-        'unlink_confirm' => 'Вы уверены?',
+        'unlink_confirm' => 'Вы уверены?'
     ],
     'reorder' => [
         'default_title' => 'Сортировать записи',
-        'no_records' => 'Нет доступных записей для сортировки.',
+        'no_records' => 'Нет доступных записей для сортировки.'
     ],
     'model' => [
         'name' => 'Модель',
@@ -367,13 +397,11 @@ return [
         'permissions' => 'Каталог :name или его подкаталоги недоступны для записи. Укажите соответствующие разрешения для веб-сервера.',
         'extension' => 'Расширение PHP :name не установлено. Установите эту библиотеку и активируйте расширение.',
         'plugin_missing' => 'Плагин :name имеет зависимость. Установите этот плагин.',
-        'debug' => 'Режим отладки включен. Это не рекомендуется для рабочих инсталяций.',
-        'decompileBackendAssets' => 'Ассеты в бэкенде в настоящее время декомпилированы. Это не рекомендуется для рабочих инсталяций.',
+        'debug' => 'Включен режим отладки. Не рекомендуется использовать режим отладки для сайта в продакшене.',
     ],
     'editor' => [
         'menu_label' => 'Настройки редактора',
         'menu_description' => 'Управление настройками редактора кода.',
-        'preview' => 'Предпросмотр',
         'font_size' => 'Размер шрифта',
         'tab_size' => 'Размер табуляции',
         'use_hard_tabs' => 'Использовать табуляцию для индентации',
@@ -408,65 +436,71 @@ return [
         'label' => 'Название',
         'class_name' => 'Класс',
         'markup_tags' => 'Теги разметки',
-        'markup_tag' => 'Тег разметки',
         'allowed_empty_tags' => 'Разрешенные пустые теги',
         'allowed_empty_tags_comment' => 'Список тегов, которые не будут удаляться, если внутри них нет содержания.',
         'allowed_tags' => 'Разрешенные теги',
         'allowed_tags_comment' => 'Список разрешенных тегов.',
+        'allowed_attrs' => 'Разрешенные атрибуты',
+        'allowed_attrs_comment' => 'Список разрешенных HTML атрибутов, в дополнение к стандартным атрибутам.',
         'no_wrap' => 'Не оборачивать теги',
         'no_wrap_comment' => 'Список тегов, которые не должны быть обернуты в блочные элементы.',
         'remove_tags' => 'Удаляемые теги',
         'remove_tags_comment' => 'Список тегов, которые будут удалены вместе с их содержанием.',
         'line_breaker_tags' => 'Теги с переводом строки',
         'line_breaker_tags_comment' => 'Список тегов, в которых будет использоваться тег перевода строки',
-        'toolbar_options' => 'Опции панели инструментов',
         'toolbar_buttons' => 'Кнопки панели инструментов',
-        'toolbar_buttons_comment' => 'Кнопки панели инструментов, которые будут отображаться в Rich Editor по умолчанию.',
-        'toolbar_buttons_preset' => 'Вставить предустановленный набор кнопок панели инструментов:',
-        'toolbar_buttons_presets' => [
-            'default' => 'По умолчанию',
-            'minimal' => 'Минимальный',
-            'full' => 'Полный',
-        ],
-        'paragraph_formats' => 'Форматы абзацев',
-        'paragraph_formats_comment' => 'Опции появляющиеся в выпадающем списке Форматы абзацев.',
+        'toolbar_buttons_comment' => 'Кнопки панели инструментов, которые будут отображаться в Rich Editor по умолчанию.'
     ],
     'tooltips' => [
-        'preview_website' => 'Просмотр сайта',
+        'preview_website' => 'Просмотр сайта'
     ],
     'mysettings' => [
         'menu_label' => 'Мои настройки',
-        'menu_description' => 'Управление настройками учетной записи администратора.',
+        'menu_description' => 'Управление настройками учетной записи администратора.'
     ],
     'myaccount' => [
         'menu_label' => 'Мой аккаунт',
         'menu_description' => 'Управление личной информацией (имя, почта, пароль)',
-        'menu_keywords' => 'безопасность логин',
+        'menu_keywords' => 'безопасность логин'
     ],
     'branding' => [
         'menu_label' => 'Персонализация панели управления',
-        'menu_description' => 'Управление внешним видом панели управления (название, цвет, логотип)',
-        'brand' => 'Бренд',
+        'menu_description' => 'Управление внешним видом панели управления',
+        'brand' => 'Брендирование',
         'logo' => 'Логотип',
         'logo_description' => 'Загрузите логотип для панели управления',
-        'favicon' => 'Фавикон',
-        'favicon_description' => 'Загрузите пользовательский фавикон для бекенда',
+        'favicon' => 'Фавиконка',
+        'favicon_description' => 'Загрузите фавиконку для панели управления',
         'app_name' => 'Название приложения',
         'app_name_description' => 'Это имя отображается в заголовке панели управления',
         'app_tagline' => 'Слоган приложения',
         'app_tagline_description' => 'Слоган будет отображаться на экране входа в панель управления.',
         'colors' => 'Цвета',
-        'primary_color' => 'Первичный color',
-        'secondary_color' => 'Вторичный color',
-        'accent_color' => 'Цвет акцента',
+        'primary_color' => 'Основной цвет',
+        'secondary_color' => 'Вторичный цвет',
+        'accent_color' => 'Акцентный цвет',
+        'login_background_type' => 'Тип фона',
+        'background_flat_color' => 'Заливка цветом',
+        'background_wallpaper' => 'Картинка',
+        'login_page' => 'Окно входа',
+        'login_image' => 'Картинка',
+        'login_page_image' => 'Картинка над фоном',
+        'login_image_random_autumn_images' => 'Рандомные осенние картинки',
+        'login_image_custom' => 'Пользовательское изображение',
+        'background_color' => 'Цвет фона',
+        'background_wallpaper_image' => 'Фоновое изображение',
+        'background_wallpaper_image_size' => 'Размер фона',
+        'background_wallpaper_size_auto' => 'Авто',
+        'background_wallpaper_size_cover' => 'Вместить в экран',
         'styles' => 'Стили',
         'custom_stylesheet' => 'Пользовательские стили',
         'navigation' => 'Навигация',
         'menu_mode' => 'Стиль меню',
         'menu_mode_inline' => 'Строчный',
-        'menu_mode_inline_no_icons' => 'Строчный (без иконок)',
+        'menu_mode_text' => 'Текст',
         'menu_mode_tile' => 'Плитка',
-        'menu_mode_collapsed' => 'Схлопнутый',
+        'menu_mode_icon' => 'Иконки',
+        'menu_mode_collapsed' => 'Схлопнутый'
     ],
     'backend_preferences' => [
         'menu_label' => 'Настройки панели управления',
@@ -476,7 +510,7 @@ return [
         'timezone' => 'Часовой пояс',
         'timezone_comment' => 'Выводить даты в выбранном часовом поясе.',
         'locale' => 'Язык',
-        'locale_comment' => 'Выберите желаемый язык панели управления.',
+        'locale_comment' => 'Выберите желаемый язык панели управления.'
     ],
     'access_log' => [
         'hint' => 'В этом журнале отображается список успешных попыток авторизаций администраторов. Записи хранятся :days дней.',
@@ -489,13 +523,14 @@ return [
         'ip_address' => 'IP адрес',
         'first_name' => 'Имя',
         'last_name' => 'Фамилия',
-        'email' => 'Email',
+        'email' => 'Почта'
     ],
     'filter' => [
         'all' => 'все',
         'options_method_not_exists' => "Модель класса :model должна определить метод :method() возвращающего варианты для фильтра ':filter'.",
+        'options_static_method_invalid_value' => "Статичный метод ':method()' в :class не возвращает правильный массив опций.",
         'date_all' => 'весь период',
-        'number_all' => 'все номера',
+        'number_all' => 'все номера'
     ],
     'import_export' => [
         'upload_csv_file' => '1. Загрузка CSV-файл',
@@ -566,19 +601,18 @@ return [
             'iso_8859_13' => 'ISO-8859-13 (Latin-7, Baltic Rim)',
             'iso_8859_14' => 'ISO-8859-14 (Latin-8, Celtic)',
             'iso_8859_15' => 'ISO-8859-15 (Latin-9, Western European revision with euro sign)',
-            'windows_1250' => 'Windows-1250 (CP1250, Central and Eastern European)',
             'windows_1251' => 'Windows-1251 (CP1251)',
             'windows_1252' => 'Windows-1252 (CP1252)'
         ]
     ],
     'permissions' => [
-        'manage_media' => 'Загрузка и управление медиаконтентом - изображениями, видео, звуками, документами',
-        'allow_unsafe_markdown' => 'Использовать небезопасный Markdown (может включать Javascript)',
+        'manage_media' => 'Управление медиафайлами'
     ],
     'mediafinder' => [
         'label' => 'Поиск медиа',
-        'default_prompt' => 'Кликните на кнопку %s, чтобы найти медиафайл',
-        'no_image' => 'Не удалось найти изображение',
+        'no_image' => 'Невозможно найти изображение',
+        'select' => 'Выбрать',
+        'replace' => 'Заменить'
     ],
     'media' => [
         'menu_label' => 'Медиафайлы',
@@ -641,6 +675,28 @@ return [
         'selection_mode' => 'Режим выделения',
         'resize_image' => 'Изменение размера изображения',
         'image_size' => 'Размер изображения:',
-        'selected_size' => 'Выбрано:',
+        'selected_size' => 'Выбрано:'
     ],
+    'table' => [
+        'add_item' => 'Добавить элемент'
+    ],
+    'uploader' => [
+        'uploading' => 'Загрузка файлов',
+        'complete' => 'Загрузка завершена'
+    ],
+    'richeditor' => [
+        'upload_from_computer' => 'Загрузить с компьютера',
+        'embedding_code' => 'Вставить код',
+        'url_required' => 'Адрес обязателен',
+        'url_validation' => 'Адрес должен начинаться с http:// или https://',
+        'add_image' => 'Вставить изображение',
+        'add_video' => 'Вставить видео',
+        'add_audio' => 'Вставить аудио',
+        'add_file' => 'Вставить файл',
+        'embedding_code_required' => 'Вставка кода обязательна',
+        'embedding_code_invalid' => 'Пожалуйста укажите правильный HTML код',
+        'embedding_code_invalid_title' => 'Непарвильный код',
+        'browse' => 'Просмотр медиафайлов',
+        'by_url' => 'Ссылка на изображение'
+    ]
 ];

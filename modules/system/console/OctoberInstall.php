@@ -1,21 +1,14 @@
 <?php namespace System\Console;
 
-use Db;
-use App;
-use Str;
 use PDO;
-use File;
+use Lang;
 use Config;
-use Backend\Database\Seeds\SeedSetupAdmin;
-use System\Classes\UpdateManager;
-use October\Rain\Config\ConfigWriter;
-use Illuminate\Console\Command;
-use Illuminate\Encryption\Encrypter;
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Console\Command;
 use Exception;
 
 /**
- * Console command to install October.
+ * OctoberInstall is a console command to install October CMS
  *
  * This sets up October for the first time. It will prompt the user for several
  * configuration items, including application URL and database config, and then
@@ -26,198 +19,171 @@ use Exception;
  */
 class OctoberInstall extends Command
 {
-    use \Illuminate\Console\ConfirmableTrait;
+    use \System\Traits\SetupHelper;
+    use \System\Traits\SetupBuilder;
 
     /**
-     * The console command name.
+     * @var string name is the console command name
      */
     protected $name = 'october:install';
 
     /**
-     * The console command description.
+     * @var string description is the console command description
      */
-    protected $description = 'Set up October for the first time.';
+    protected $description = 'Set up October CMS for the first time.';
 
     /**
-     * @var October\Rain\Config\ConfigWriter
+     * @var int keyRetries counts license key attempts before giving up
      */
-    protected $configWriter;
+    protected $keyRetries = 0;
 
     /**
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->configWriter = new ConfigWriter;
-    }
-
-    /**
-     * Execute the console command.
+     * handle executes the console command
      */
     public function handle()
     {
-        $this->displayIntro();
-
-        if (
-            App::hasDatabase() &&
-            !$this->confirm('Application appears to be installed already. Continue anyway?', false)
-        ) {
-            return;
+        if (!$this->checkEnvWritable()) {
+            $this->output->error('Cannot write to .env file. Check file permissions and try again.');
+            return 1;
         }
 
+        $this->outputIntro();
+        $this->setupEncryptionKey();
+        $this->outputLanguageTable();
+        $this->setupLanguage();
+
+        // Application Configuration
+        $this->output->section(Lang::get('system::lang.installer.app_config_section'));
+        $this->setupApplicationUrls();
         $this->setupDatabaseConfig();
-        $this->setupAdminUser();
-        $this->setupCommonValues();
 
-        $chosenToInstall = [];
-
-        if ($this->confirm('Configure advanced options?', false)) {
-            $this->setupEncryptionKey();
-            $this->setupAdvancedValues();
-            $chosenToInstall = $this->askToInstallPlugins();
-        }
-        else {
-            $this->setupEncryptionKey(true);
+        if ($this->nonInteractiveCheck()) {
+            $this->outputNonInteractive();
+            return 1;
         }
 
-        $this->setupMigrateDatabase();
+        // License Key
+        $this->output->section(Lang::get('system::lang.installer.license_section'));
+        $this->setupLicenseKey();
 
-        foreach ($chosenToInstall as $pluginCode) {
-            $this->output->writeln('<info>Installing plugin ' . $pluginCode . '</info>');
-            $this->callSilent('plugin:install', [
-                'name' => $pluginCode
-            ]);
-            $this->output->writeln('<info>' . $pluginCode . ' installed successfully.</info>');
-        }
+        // Installing Dependencies
+        $this->output->section(Lang::get('system::lang.installer.dependencies_section'));
+        $this->setupInstallOctober();
 
-        $this->displayOutro();
+        // $this->output->section('Migrating Database');
+        // $this->refreshEnvVars();
+        // $this->setupMigrateDatabase();
+
+        $this->outputOutro();
     }
 
     /**
-     * Get the console command options.
+     * setupLanguage asks the user their language preference
      */
-    protected function getOptions()
+    protected function setupLanguage()
     {
-        return [
-            ['force', null, InputOption::VALUE_NONE, 'Force the operation to run.'],
-        ];
-    }
-
-    //
-    // Misc
-    //
-
-    protected function setupCommonValues()
-    {
-        $url = $this->ask('Application URL', Config::get('app.url'));
-
         try {
-            $availableLocales = (new \Backend\Models\Preference)->getLocaleOptions();
-            $localesByName = [];
-            foreach ($availableLocales as $locale => $name) {
-                $localesByName[$name[0]] = $locale;
+            $locale = strtolower($this->ask(
+                // Select Language
+                Lang::get('system::lang.installer.locale_select_label'),
+                env('APP_LOCALE', 'en')
+            ));
+
+            $availableLocales = $this->getAvailableLocales();
+            if (!isset($availableLocales[$locale])) {
+                throw new Exception("Language code '{$locale}' is invalid, please try again");
             }
 
-            $localeName = $this->choice('Default Backend Locale', array_keys($localesByName));
-
-            $locale = $localesByName[$localeName];
-        } catch (\Exception $e) {
-            // Installation failed halfway through, recover gracefully
-            $locale = $this->ask('Default Backend Locale', 'en');
+            $this->setEnvVar('APP_LOCALE', $locale);
+            Lang::setLocale($locale);
         }
-
-        $this->writeToConfig('app', ['url' => $url, 'locale' => $locale]);
+        catch (Exception $ex) {
+            $this->output->error($ex->getMessage());
+            return $this->setupLanguage();
+        }
     }
 
-    protected function setupAdvancedValues()
+    /**
+     * outputLanguageTable displays a 2 column table with the available locales
+     */
+    protected function outputLanguageTable()
     {
-        $backendUri = $this->ask('Backend URL', Config::get('cms.backendUri'));
-        $this->writeToConfig('cms', ['backendUri' => $backendUri]);
+        $locales = $this->getAvailableLocales();
 
-        $defaultMask = $this->ask('File Permission Mask', Config::get('cms.defaultMask.file') ?: '777');
-        $this->writeToConfig('cms', ['defaultMask.file' => $defaultMask]);
-
-        $defaultMask = $this->ask('Folder Permission Mask', Config::get('cms.defaultMask.folder') ?: '777');
-        $this->writeToConfig('cms', ['defaultMask.folder' => $defaultMask]);
-
-        $debug = (bool) $this->confirm('Enable Debug Mode?', true);
-        $this->writeToConfig('app', ['debug' => $debug]);
-    }
-
-    protected function askToInstallPlugins()
-    {
-        $chosenToInstall = [];
-        if ($this->confirm('Install the October.Drivers plugin?', false)) {
-            $chosenToInstall[] = 'October.Drivers';
-        }
-        if ($this->confirm('Install the Rainlab.Builder plugin?', false)) {
-            $chosenToInstall[] = 'Rainlab.Builder';
-        }
-        return $chosenToInstall;
-    }
-
-    //
-    // Encryption key
-    //
-
-    protected function setupEncryptionKey($force = false)
-    {
-        $validKey = false;
-        $cipher = Config::get('app.cipher');
-        $keyLength = $this->getKeyLength($cipher);
-        $randomKey = $this->getRandomKey($cipher);
-
-        if ($force) {
-            $key = $randomKey;
-        }
-        else {
-            $this->line(sprintf('Enter a new value of %s characters, or press ENTER to use the generated key', $keyLength));
-
-            while (!$validKey) {
-                $key = $this->ask('Application key', $randomKey);
-                $validKey = Encrypter::supported($key, $cipher);
-                if (!$validKey) {
-                    $this->error(sprintf('[ERROR] Invalid key length for "%s" cipher. Supplied key must be %s characters in length.', $cipher, $keyLength));
-                }
+        $tableRows = [];
+        $halfCount = count($locales) / 2;
+        $i = 0;
+        foreach ($locales as $locale => $info) {
+            if ($i < $halfCount) {
+                $tableRows[$i] = [$locale, "({$info[1]}) {$info[0]}"];
             }
+            else {
+                $tableRows[$i-$halfCount] = array_merge(
+                    $tableRows[$i-$halfCount],
+                    [$locale, "({$info[1]}) {$info[0]}"]
+                );
+            }
+            $i++;
         }
 
-        $this->writeToConfig('app', ['key' => $key]);
+        $this->output->table(['Code', 'Language', 'Code', 'Language'], $tableRows);
+    }
+
+    /**
+     * setupApplicationUrls asks for URL based configuration
+     */
+    protected function setupApplicationUrls()
+    {
+        $url = $this->ask(
+            // Application URL
+            Lang::get('system::lang.installer.app_url_label'),
+            env('APP_URL', 'http://localhost')
+        );
+        $this->setEnvVar('APP_URL', $url);
+
+        // To secure your application, use a custom address for accessing the admin panel.
+        $this->comment(Lang::get('system::lang.installer.backend_uri_comment'));
+        $backendUri = $this->ask(
+            // Backend URI
+            Lang::get('system::lang.installer.backend_uri_label'),
+            env('BACKEND_URI', '/backend')
+        );
+        $this->setEnvVar('BACKEND_URI', $backendUri);
+    }
+
+    /**
+     * setupEncryptionKey sets the application encryption key if not set already
+     */
+    protected function setupEncryptionKey()
+    {
+        if (env('APP_KEY')) {
+            return;
+        }
+
+        $key = $this->getRandomKey();
+        $this->setEnvVar('APP_KEY', $key);
+        Config::set('app.key', $key);
 
         $this->info(sprintf('Application key [%s] set successfully.', $key));
     }
 
     /**
-     * Generate a random key for the application.
-     *
-     * @param  string  $cipher
-     * @return string
+     * setupDatabaseConfig requests the database engine
      */
-    protected function getRandomKey($cipher)
-    {
-        return Str::random($this->getKeyLength($cipher));
-    }
-
-    /**
-     * Returns the supported length of a key for a cipher.
-     *
-     * @param  string  $cipher
-     * @return int
-     */
-    protected function getKeyLength($cipher)
-    {
-        return $cipher === 'AES-128-CBC' ? 16 : 32;
-    }
-
-    //
-    // Database config
-    //
-
     protected function setupDatabaseConfig()
     {
-        $type = $this->choice('Database type', ['MySQL', 'Postgres', 'SQLite', 'SQL Server'], 'SQLite');
+        $type = $this->choice(
+            // Database Engine
+            Lang::get('system::lang.installer.database_engine_label'),
+            [
+                'SQLite',
+                'MySQL',
+                'Postgres',
+                'SQL Server'
+            ],
+            'SQLite'
+        );
+
         $typeMap = [
             'SQLite' => 'sqlite',
             'MySQL' => 'mysql',
@@ -225,44 +191,120 @@ class OctoberInstall extends Command
             'SQL Server' => 'sqlsrv',
         ];
 
-        $driver = array_get($typeMap, $type, 'sqlite');
+        $driver = $typeMap[$type] ?? 'sqlite';
 
-        $method = 'setupDatabase'.Str::studly($driver);
+        $this->setEnvVar('DB_CONNECTION', $driver);
+        Config::set('database.default', $driver);
 
-        $newConfig = $this->$method();
+        if ($driver === 'sqlite') {
+            $this->setupDatabaseSqlite();
+        }
+        else {
+            $this->setupDatabase($driver);
+        }
 
-        $this->writeToConfig('database', ['default' => $driver]);
-
-        foreach ($newConfig as $config => $value) {
-            $this->writeToConfig('database', ['connections.'.$driver.'.'.$config => $value]);
+        // Validate database connection
+        try {
+            $this->checkDatabaseFromConfig($driver);
+        }
+        catch (Exception $ex) {
+            $this->output->error($ex->getMessage());
+            return $this->setupDatabaseConfig();
         }
     }
 
-    protected function setupDatabaseMysql()
+    /**
+     * checkDatabaseFromConfig validates the supplied database config
+     * and throws an exception if something is wrong
+     */
+    protected function checkDatabaseFromConfig($driver)
     {
-        $result = [];
-        $result['host'] = $this->ask('MySQL Host', Config::get('database.connections.mysql.host'));
-        $result['port'] = $this->output->ask('MySQL Port', Config::get('database.connections.mysql.port') ?: false) ?: '';
-        $result['database'] = $this->ask('Database Name', Config::get('database.connections.mysql.database'));
-        $result['username'] = $this->ask('MySQL Login', Config::get('database.connections.mysql.username'));
-        $result['password'] = $this->ask('MySQL Password', Config::get('database.connections.mysql.password') ?: false) ?: '';
-        return $result;
+        $this->checkDatabase(
+            $driver,
+            Config::get("database.connections.{$driver}.host"),
+            Config::get("database.connections.{$driver}.port"),
+            Config::get("database.connections.{$driver}.database"),
+            Config::get("database.connections.{$driver}.username"),
+            Config::get("database.connections.{$driver}.password")
+        );
     }
 
-    protected function setupDatabasePgsql()
+    /**
+     * setupDatabase sets up a SQL based database
+     */
+    protected function setupDatabase($driver)
     {
-        $result = [];
-        $result['host'] = $this->ask('Postgres Host', Config::get('database.connections.pgsql.host'));
-        $result['port'] = $this->ask('Postgres Port', Config::get('database.connections.pgsql.port') ?: false) ?: '';
-        $result['database'] = $this->ask('Database Name', Config::get('database.connections.pgsql.database'));
-        $result['username'] = $this->ask('Postgres Login', Config::get('database.connections.pgsql.username'));
-        $result['password'] = $this->ask('Postgres Password', Config::get('database.connections.pgsql.password') ?: false) ?: '';
-        return $result;
+        // Hostname for the database connection.
+        $this->comment(Lang::get('system::lang.installer.database_host_comment'));
+        $host = $this->ask(
+            // Database Host
+            Lang::get('system::lang.installer.database_host_label'),
+            env('DB_HOST', 'localhost')
+        );
+        $this->setEnvVar('DB_HOST', $host);
+        Config::set("database.connections.{$driver}.host", $host);
+
+        // (Optional) A port for the connection.
+        $this->comment(Lang::get('system::lang.installer.database_port_comment'));
+        $port = $this->ask(
+            // Database Port
+            Lang::get('system::lang.installer.database_port_label'),
+            env('DB_PORT', false)
+        ) ?: '';
+        $this->setEnvVar('DB_PORT', $port);
+        Config::set("database.connections.{$driver}.port", $port);
+
+        // Specify the name of the database to use.
+        $this->comment(Lang::get('system::lang.installer.database_name_comment'));
+        $database = $this->ask(
+            // Database Name
+            Lang::get('system::lang.installer.database_name_label'),
+            env('DB_DATABASE', 'octobercms')
+        );
+        $this->setEnvVar('DB_DATABASE', $database);
+        Config::set("database.connections.{$driver}.database", $database);
+
+        // User with create database privileges.
+        $this->comment(Lang::get('system::lang.installer.database_login_comment'));
+        $username = $this->ask(
+            // Database Login
+            Lang::get('system::lang.installer.database_login_label'),
+            env('DB_USERNAME', 'root')
+        );
+        $this->setEnvVar('DB_USERNAME', $username);
+        Config::set("database.connections.{$driver}.username", $username);
+
+        // Password for the specified user.
+        $this->comment(Lang::get('system::lang.installer.database_pass_comment'));
+        $password = $this->ask(
+            // Database Password
+            Lang::get('system::lang.installer.database_pass_label'),
+            env('DB_PASSWORD', false)
+        ) ?: '';
+        $this->setEnvVar('DB_PASSWORD', $password);
+        Config::set("database.connections.{$driver}.password", $password);
     }
 
+    /**
+     * setupDatabaseSqlite sets up the SQLite database engine
+     */
     protected function setupDatabaseSqlite()
     {
-        $filename = $this->ask('Database path', Config::get('database.connections.sqlite.database'));
+        // For file-based storage, enter a path relative to the application root directory.
+        $this->comment(Lang::get('system::lang.installer.database_path_comment'));
+
+        $defaultDb = env('DB_DATABASE', 'storage/database.sqlite');
+        if ($defaultDb === 'database') {
+            $defaultDb = 'storage/database.sqlite';
+        }
+
+        $filename = $this->ask(
+            // Database Path
+            Lang::get('system::lang.installer.database_path_label'),
+            $defaultDb
+        );
+        $this->setEnvVar('DB_DATABASE', $filename);
+        Config::set("database.connections.sqlite.database", $filename);
 
         try {
             if (!file_exists($filename)) {
@@ -275,129 +317,99 @@ class OctoberInstall extends Command
             }
         }
         catch (Exception $ex) {
-            $this->error($ex->getMessage());
-            $this->setupDatabaseSqlite();
+            $this->output->error($ex->getMessage());
+            return $this->setupDatabaseSqlite();
         }
 
         return ['database' => $filename];
     }
 
-    protected function setupDatabaseSqlsrv()
+    /**
+     * setupLicenseKey asks for the licence key
+     */
+    protected function setupLicenseKey()
     {
-        $result = [];
-        $result['host'] = $this->ask('SQL Host', Config::get('database.connections.sqlsrv.host'));
-        $result['port'] = $this->ask('SQL Port', Config::get('database.connections.sqlsrv.port') ?: false) ?: '';
-        $result['database'] = $this->ask('Database Name', Config::get('database.connections.sqlsrv.database'));
-        $result['username'] = $this->ask('SQL Login', Config::get('database.connections.sqlsrv.username'));
-        $result['password'] = $this->ask('SQL Password', Config::get('database.connections.sqlsrv.password') ?: false) ?: '';
-        return $result;
-    }
+        if ($this->keyRetries++ > 10) {
+            // Too many failed attempts
+            $this->output->error(Lang::get('system::lang.installer.too_many_failures_label'));
 
-    //
-    // Migration
-    //
-
-    protected function setupAdminUser()
-    {
-        $this->line('Enter a new value, or press ENTER for the default');
-
-        SeedSetupAdmin::$firstName = $this->ask('First Name', SeedSetupAdmin::$firstName);
-        SeedSetupAdmin::$lastName = $this->ask('Last Name', SeedSetupAdmin::$lastName);
-        SeedSetupAdmin::$email = $this->ask('Email Address', SeedSetupAdmin::$email);
-        SeedSetupAdmin::$login = $this->ask('Admin Login', SeedSetupAdmin::$login);
-        SeedSetupAdmin::$password = $this->ask('Admin Password', SeedSetupAdmin::$password);
-
-        if (!$this->confirm('Is the information correct?', true)) {
-            $this->setupAdminUser();
+            $this->outputNonInteractive();
+            exit(1);
         }
-    }
 
-    protected function setupMigrateDatabase()
-    {
-        $this->line('Migrating application and plugins...');
+        // Enter a valid License Key to proceed.
+        $this->comment(Lang::get('system::lang.installer.license_key_comment'));
+
+        // License Key
+        $licenceKey = trim($this->ask(Lang::get('system::lang.installer.license_key_label')));
+        if (!strlen($licenceKey)) {
+            return $this->setupLicenseKey();
+        }
 
         try {
-            Db::purge();
+            $this->setupSetProject($licenceKey);
 
-            UpdateManager::instance()
-                ->setNotesOutput($this->output)
-                ->update()
-            ;
+            // Thanks for being a customer of October CMS!
+            $this->output->success(Lang::get('system::lang.installer.license_thanks_comment'));
         }
         catch (Exception $ex) {
-            $this->error($ex->getMessage());
-            $this->setupDatabaseConfig();
-            $this->setupMigrateDatabase();
+            $this->output->error($ex->getMessage());
+            return $this->setupLicenseKey();
         }
-    }
-
-    //
-    // Helpers
-    //
-
-    protected function displayIntro()
-    {
-        $message = [
-            ".====================================================================.",
-            "                                                                      ",
-            " .d8888b.   .o8888b.   db  .d8888b.  d8888b. d88888b d8888b.  .d888b. ",
-            ".8P    Y8. d8P    Y8   88 .8P    Y8. 88  `8D 88'     88  `8D .8P , Y8.",
-            "88      88 8P      oooo88 88      88 88oooY' 88oooo  88oobY' 88  |  88",
-            "88      88 8b      ~~~~88 88      88 88~~~b. 88~~~~  88`8b   88  |/ 88",
-            "`8b    d8' Y8b    d8   88 `8b    d8' 88   8D 88.     88 `88. `8b | d8'",
-            " `Y8888P'   `Y8888P'   YP  `Y8888P'  Y8888P' Y88888P 88   YD  `Y888P' ",
-            "                                                                      ",
-            "`=========================== INSTALLATION ==========================='",
-            "",
-        ];
-
-        $this->line($message);
-    }
-
-    protected function displayOutro()
-    {
-        $message = [
-            ".=========================================.",
-            "                ,@@@@@@@,                  ",
-            "        ,,,.   ,@@@@@@/@@,  .oo8888o.      ",
-            "     ,&%%&%&&%,@@@@@/@@@@@@,8888\88/8o     ",
-            "    ,%&\%&&%&&%,@@@\@@@/@@@88\88888/88'    ",
-            "    %&&%&%&/%&&%@@\@@/ /@@@88888\88888'    ",
-            "    %&&%/ %&%%&&@@\ V /@@' `88\8 `/88'     ",
-            "    `&%\ ` /%&'    |.|        \ '|8'       ",
-            "        |o|        | |         | |         ",
-            "        |.|        | |         | |         ",
-            "`========= INSTALLATION COMPLETE ========='",
-            "",
-        ];
-
-        $this->line($message);
-    }
-
-    protected function writeToConfig($file, $values)
-    {
-        $configFile = $this->getConfigFile($file);
-
-        foreach ($values as $key => $value) {
-            Config::set($file.'.'.$key, $value);
-        }
-
-        $this->configWriter->toFile($configFile, $values);
     }
 
     /**
-     * Get a config file and contents.
-     *
-     * @return array
+     * setupMigrateDatabase migrates the database
      */
-    protected function getConfigFile($name = 'app')
+    protected function setupMigrateDatabase()
     {
-        $env = $this->option('env') ? $this->option('env').'/' : '';
+        $errCode = null;
+        $exec = 'php artisan october:migrate';
+        $this->comment("Executing: {$exec}");
+        $this->output->newLine();
 
-        $name .= '.php';
+        passthru($exec, $errCode);
 
-        $contents = File::get($path = $this->laravel['path.config']."/{$env}{$name}");
+        if ($errCode !== 0) {
+            $this->outputFailedOutro();
+            exit(1);
+        }
+    }
 
-        return $path;
+    protected function outputNonInteractive()
+    {
+        // Too many failed attempts
+        $this->output->error(Lang::get('system::lang.installer.non_interactive_label'));
+
+        // If you see this error immediately, use these non-interactive commands instead.
+        $this->comment(Lang::get('system::lang.installer.non_interactive_comment'));
+        $this->output->newLine();
+
+        // Open this application in your browser
+        $this->line(Lang::get('system::lang.installer.open_configurator_comment'));
+        $this->output->newLine();
+
+        $this->line('-- OR --');
+        $this->output->newLine();
+
+        $this->line("* php artisan project:set <LICENSE KEY>");
+        $this->output->newLine();
+
+        if ($want = $this->option('want')) {
+            $this->line("* php artisan october:build --want=".$want);
+        }
+        else {
+            $this->line("* php artisan october:build");
+        }
+    }
+
+    /**
+     * getOptions get the console command options
+     */
+    protected function getOptions()
+    {
+        return [
+            ['want', 'w', InputOption::VALUE_REQUIRED, 'Provide a custom version.'],
+        ];
     }
 }
