@@ -220,12 +220,17 @@ return [
         'records_per_page' => 'Records per page',
         'records_per_page_help' => 'Select the number of records per page to display. Please note that high number of records on a single page can reduce performance.',
         'check' => 'Check',
+        'create_button' => 'New :name',
         'delete_selected' => 'Delete selected',
         'delete_selected_empty' => 'There are no selected records to delete.',
         'delete_selected_confirm' => 'Delete the selected records?',
         'delete_selected_success' => 'Deleted selected records.',
         'column_switch_true' => 'Yes',
         'column_switch_false' => 'No',
+    ],
+    'object_list' => [
+        'prop_cant_be_empty' => 'Property :property cannot be empty',
+        'key_value_exists' => 'Value is already defined: :property_value',
     ],
     'fileupload' => [
         'attachment' => 'Attachment',
@@ -619,6 +624,8 @@ return [
         'no_image' => 'The image could not be found',
         'select' => 'Select',
         'replace' => 'Replace',
+        'not_an_image' => 'The selected file is not an image',
+        'click_to_select_file' => 'Click to select a file'
     ],
     'media' => [
         'menu_label' => 'Media',
@@ -685,6 +692,10 @@ return [
     ],
     'table' => [
         'add_item' => 'Add item',
+    ],
+    'dictionary' => [
+        'key_required' => 'The Key field is required',
+        'value_required' => 'The Value field is required'
     ],
     'uploader' => [
         'uploading' => 'Uploading Files',
